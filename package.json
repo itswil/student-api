@@ -1,0 +1,16 @@
+{
+  "version": "1.0.109",
+  "name": "hono-api",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "dependencies": {
+    "hono": "^3.5.6",
+    "lowdb": "^6.0.1",
+    "uuid": "^9.0.0"
+  },
+  "scripts": {
+    "start": "bun run --hot src/index.ts"
+  },
+  "module": "src/index.js"
+}
