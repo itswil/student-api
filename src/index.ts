@@ -8,7 +8,6 @@ const port = parseInt(process.env.PORT) || 3000;
 const app = new Hono();
 
 app.get("/", (c) => c.text("Student API"));
-app.notFound((c) => c.json({ message: "Not Found", ok: false }, 404));
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
     c.status(err.status);
