@@ -17,21 +17,21 @@ api.post("/", async (c) => {
   return c.json(await createOne(newStudent));
 });
 
-api.put("/:studentId", async (c) => {
-  const studentId = Number(c.req.param("studentId"));
+api.put("/:id", async (c) => {
+  const id = Number(c.req.param("id"));
   const valuesToUpdate = await c.req.json();
   const studentValuesToUpdate: Partial<
     Omit<InferSelectModel<typeof students>, "id">
   > = pick(valuesToUpdate, ["name", "dob", "email"]);
 
-  const updatedStudent = await updateOneById(studentId, studentValuesToUpdate);
+  const updatedStudent = await updateOneById(id, studentValuesToUpdate);
 
   return c.json(updatedStudent);
 });
 
-api.delete("/:studentId", async (c) => {
-  const studentId = Number(c.req.param("studentId"));
-  await deleteOneById(studentId);
+api.delete("/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+  await deleteOneById(id);
 
   return c.text(null, 204);
 });
