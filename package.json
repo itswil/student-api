@@ -2,15 +2,20 @@
   "version": "1.0.109",
   "name": "hono-api",
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "drizzle-kit": "^0.19.13"
   },
   "dependencies": {
+    "drizzle-orm": "^0.28.5",
     "hono": "^3.5.6",
-    "lowdb": "^6.0.1",
-    "uuid": "^9.0.0"
+    "lodash": "^4.17.21",
+    "postgres": "^3.3.5"
   },
   "scripts": {
-    "start": "bun run --hot src/index.ts"
+    "start": "bun run --hot src/index.ts",
+    "test": "bun test",
+    "generate": "drizzle-kit generate:pg --schema=./src/db/schema.ts",
+    "migration": "bun src/db/migrate.ts"
   },
   "module": "src/index.js"
 }

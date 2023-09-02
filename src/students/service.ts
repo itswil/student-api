@@ -1,62 +1,49 @@
+import { InferInsertModel, InferSelectModel, eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
-import { v1 as uuid } from "uuid";
+
+import { students } from "../db/schema";
 import { db } from "../db/client";
 
-export const findAll = async () => {
-  await db.read();
-  return db.data.students;
-};
+export const findAll = async () => await db.select().from(students);
 
-const findOneById = async (id: string) => {
-  await db.read();
-  return db.data.students.find((student) => student.id === id);
-};
+const findOneById = async (id: number) =>
+  await db.select().from(students).where(eq(students.id, id));
 
-const findOneByEmail = async (email: string) => {
-  await db.read();
-  return db.data.students.find((student) => student.email === email);
-};
+const findOneByEmail = async (email: string) =>
+  await db.select().from(students).where(eq(students.email, email));
 
-export const createOne = async (student: Omit<Student, "id">) => {
-  const studentEmailExists = await findOneByEmail(student.email);
-  if (studentEmailExists) {
+export const createOne = async (
+  newStudent: InferInsertModel<typeof students>
+) => {
+  const studentsByEmail = await findOneByEmail(newStudent.email);
+  if (studentsByEmail.length) {
     throw new HTTPException(409, { message: "Email already exists" });
   }
 
-  await db.read();
-  const newStudent = { ...student, id: uuid() };
-  db.data.students.push(newStudent);
-  await db.write();
-
-  return newStudent;
+  return await db.insert(students).values(newStudent).returning();
 };
 
 export const updateOneById = async (
-  id: string,
-  updatedValues: Partial<Student>
+  id: number,
+  updatedValues: Partial<Omit<InferSelectModel<typeof students>, "id">>
 ) => {
-  const studentIdExists = await findOneById(id);
-  if (!studentIdExists) {
+  const studentsById = await findOneById(id);
+  if (studentsById.length === 0) {
     throw new HTTPException(404, { message: "User not found" });
   }
 
-  await db.read();
-  const existingRecord = db.data.students.find((student) => student.id === id);
-  const updatedRecord = { ...existingRecord, ...updatedValues };
-  db.data.students = db.data.students.filter((student) => student.id !== id);
-  db.data.students.push(updatedRecord);
-  await db.write();
-
-  return updatedRecord;
+  return await db
+    .update(students)
+    .set(updatedValues)
+    .where(eq(students.id, id))
+    .returning();
 };
 
-export const deleteOneById = async (id: string): Promise<void> => {
-  const studentIdExists = await findOneById(id);
-  if (!studentIdExists) {
+export const deleteOneById = async (id: number): Promise<void> => {
+  const studentsById = await findOneById(id);
+  if (studentsById.length === 0) {
     throw new HTTPException(404, { message: "User not found" });
   }
 
-  await db.read();
-  db.data.students = db.data.students.filter((student) => student.id !== id);
-  await db.write();
+  await db.delete(students).where(eq(students.id, id));
 };
