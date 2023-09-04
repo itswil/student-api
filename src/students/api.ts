@@ -2,7 +2,13 @@ import { InferSelectModel } from "drizzle-orm";
 import { Hono } from "hono";
 import pick from "lodash/pick";
 
-import { createOne, deleteOneById, findAll, updateOneById } from "./service";
+import {
+  createOne,
+  deleteOneById,
+  findAll,
+  getA,
+  updateOneById,
+} from "./service";
 import { students } from "../db/schema";
 
 const api = new Hono();
@@ -37,3 +43,5 @@ api.delete("/:id", async (c) => {
 });
 
 export { api };
+
+export const getMessage = () => "Hello" + getA();

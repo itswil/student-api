@@ -47,3 +47,5 @@ export const deleteOneById = async (id: number): Promise<void> => {
 
   await db.delete(students).where(eq(students.id, id));
 };
+
+export const getA = () => "A";
