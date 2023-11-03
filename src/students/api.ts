@@ -1,6 +1,6 @@
 import { InferSelectModel } from "drizzle-orm";
 import { Hono } from "hono";
-import pick from "lodash/pick";
+import { pick } from "lodash-es";
 
 import { createOne, deleteOneById, findAll, updateOneById } from "./service";
 import { students } from "../db/schema";
